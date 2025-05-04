@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>متابعة البلاغات - نظام البلاغات</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #b17259; /* Darker brown from logo */
+            --secondary-color: #bd9380; /* Lighter brown/pinkish from logo */
+            --background-color: #f4f7f6; /* Slightly off-white background */
+            --header-bg-color: #f8f9fa; /* Light grey for header */
+            --text-color: #333333; /* Dark grey for text */
+            --link-color: var(--primary-color);
+            --border-color: #dee2e6;
+            --card-bg-color: #ffffff;
+            --card-shadow: 0 4px 8px rgba(0,0,0,0.08);
+            --danger-color: #dc3545; /* Red for high importance */
+            --warning-color: #ffc107; /* Orange for medium importance */
+            --info-color: #17a2b8; /* Blue for low importance (adjusted) */
+            --status-received-bg: #cfe2ff; --status-received-text: #084298;
+            --status-assigned-bg: #fff3cd; --status-assigned-text: #664d03;
+            --status-inprogress-bg: #d1ecf1; --status-inprogress-text: #0c5460;
+            --status-resolved-bg: #d4edda; --status-resolved-text: #155724;
+            --status-escalated-bg: #f8d7da; --status-escalated-text: #842029;
+            --status-closed-bg: #e2e3e5; --status-closed-text: #41464b;
+        }
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        header {
+            background-color: var(--header-bg-color);
+            padding: 15px 0;
+            text-align: center;
+            width: 100%;
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        header img {
+            max-height: 80px;
+        }
+        nav {
+            background-color: var(--primary-color);
+            width: 100%;
+            padding: 10px 0;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        nav a {
+            margin: 0 20px;
+            text-decoration: none;
+            color: white;
+            font-weight: 700;
+            font-size: 1.1em;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+        nav a:hover, nav a.active {
+            background-color: rgba(255, 255, 255, 0.2);
+            text-decoration: none;
+        }
+        main {
+            flex-grow: 1;
+            padding: 40px 20px;
+            width: 100%;
+            max-width: 1200px; /* Wider for tracking page */
+            box-sizing: border-box;
+        }
+        main h1 {
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        #report-list {
+            margin-top: 20px;
+            text-align: right;
+        }
+        .report-item {
+            background-color: var(--card-bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px 25px;
+            margin-bottom: 20px;
+            box-shadow: var(--card-shadow);
+            transition: box-shadow 0.3s ease;
+        }
+        .report-item:hover {
+             box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+        }
+        .report-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        .report-header h3 {
+            margin: 0;
+            color: var(--primary-color);
+            font-size: 1.3em;
+        }
+        .report-header h3 span {
+             color: var(--secondary-color);
+             font-weight: normal;
+             font-size: 0.9em;
+        }
+        .report-status {
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.9em;
+            font-weight: bold;
+            text-align: center;
+        }
+        .status-RECEIVED { background-color: var(--status-received-bg); color: var(--status-received-text); }
+        .status-ASSIGNED { background-color: var(--status-assigned-bg); color: var(--status-assigned-text); }
+        .status-IN_PROGRESS { background-color: var(--status-inprogress-bg); color: var(--status-inprogress-text); }
+        .status-RESOLVED { background-color: var(--status-resolved-bg); color: var(--status-resolved-text); }
+        .status-ESCALATED { background-color: var(--status-escalated-bg); color: var(--status-escalated-text); }
+        .status-CLOSED { background-color: var(--status-closed-bg); color: var(--status-closed-text); }
+
+        .report-details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 10px 20px; /* Row gap, Column gap */
+            margin-bottom: 15px;
+        }
+        .report-details-grid p {
+            margin: 5px 0;
+            line-height: 1.6;
+            font-size: 0.95em;
+        }
+        .report-details-grid p span {
+            font-weight: 700;
+            color: #555;
+            margin-left: 5px;
+        }
+        .report-item .full-width-detail {
+             grid-column: 1 / -1; /* Make details span full width */
+             margin-top: 10px;
+        }
+
+        .report-images {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+        .report-images p span {
+             font-weight: 700;
+             color: #555;
+             display: block;
+             margin-bottom: 10px;
+        }
+        .report-images img {
+            max-width: 100px;
+            max-height: 100px;
+            margin: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            vertical-align: middle;
+            transition: transform 0.2s ease;
+            cursor: pointer;
+        }
+         .report-images img:hover {
+             transform: scale(1.05);
+             border-color: var(--secondary-color);
+         }
+        .importance-label {
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            font-weight: bold;
+            color: white;
+            display: inline-block;
+        }
+        .importance-high { background-color: var(--danger-color); }
+        .importance-medium { background-color: var(--warning-color); color: #333; }
+        .importance-low { background-color: var(--info-color); }
+
+        .report-actions {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+        .report-actions label {
+            margin-left: 5px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+        .report-actions select, .report-actions button {
+            padding: 8px 12px;
+            border-radius: 5px;
+            border: 1px solid var(--border-color);
+            font-size: 0.9em;
+        }
+        .report-actions button {
+            background-color: var(--primary-color);
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+        .report-actions button:hover {
+            background-color: var(--button-hover-bg-color);
+        }
+
+        .flash-messages {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 30px 0; /* Position below heading */
+        }
+        .flash-messages li {
+            padding: 12px 20px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 1.05em;
+        }
+        .flash-success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .flash-error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .flash-warning { background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
+        .no-reports { color: #6c757d; font-style: italic; margin-top: 30px; text-align: center; font-size: 1.1em; }
+
+        footer {
+            background-color: var(--header-bg-color);
+            padding: 15px 0;
+            text-align: center;
+            width: 100%;
+            border-top: 1px solid var(--border-color);
+            margin-top: auto;
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        /* Modal styles for image viewer */
+        .modal {
+            display: none; 
+            position: fixed; 
+            z-index: 1000; 
+            padding-top: 60px; 
+            left: 0;
+            top: 0;
+            width: 100%; 
+            height: 100%; 
+            overflow: auto; 
+            background-color: rgba(0,0,0,0.9);
+        }
+        .modal-content {
+            margin: auto;
+            display: block;
+            width: 80%;
+            max-width: 700px;
+        }
+        .modal-content {
+            animation-name: zoom;
+            animation-duration: 0.6s;
+        }
+        @keyframes zoom {
+            from {transform:scale(0)} 
+            to {transform:scale(1)}
+        }
+        .close {
+            position: absolute;
+            top: 15px;
+            right: 35px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        .close:hover,
+        .close:focus {
+            color: #bbb;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="شعار شركة الدرعية">
+    </header>
+    <nav>
+        <!-- Update links to use url_for -->
+        <a href="{{ url_for('main.index') }}" class="{% if request.endpoint == 'main.index' %}active{% endif %}">الرئيسية</a>
+        <a href="{{ url_for('main.report_page') }}" class="{% if request.endpoint == 'main.report_page' %}active{% endif %}">تقديم بلاغ</a>
+        <a href="{{ url_for('main.track_page') }}" class="{% if request.endpoint == 'main.track_page' %}active{% endif %}">متابعة البلاغات</a>
+        {% if current_user.is_authenticated %}
+            <a href="{{ url_for('main.inbox') }}" class="{% if request.endpoint == 'main.inbox' %}active{% endif %}">صندوق الوارد</a>
+            {% if current_user.role == UserRole.PROJECT_MANAGER %}
+                <a href="{{ url_for('main.manage_users_page') }}" class="{% if request.endpoint == 'main.manage_users_page' %}active{% endif %}">إدارة المستخدمين</a>
+            {% endif %}
+            <a href="{{ url_for('main.logout') }}">تسجيل الخروج</a>
+        {% else %}
+            <a href="{{ url_for('main.login') }}" class="{% if request.endpoint == 'main.login' %}active{% endif %}">تسجيل الدخول</a>
+        {% endif %}
+    </nav>
+    <main>
+        <h1>متابعة حالة البلاغات</h1>
+
+        {# Display flashed messages #}
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <ul class=flash-messages>
+            {% for category, message in messages %}
+              <li class="flash-{{ category }}">{{ message }}</li>
+            {% endfor %}
+            </ul>
+          {% endif %}
+        {% endwith %}
+
+        <div id="report-list">
+            {% if reports %}
+                {% for report in reports %}
+                    <div class="report-item">
+                        <div class="report-header">
+                            <h3>بلاغ رقم: <span>{{ report.id[:8] }}...</span></h3>
+                            <span class="report-status status-{{ report.status.name }}">{{ report.status.value }}</span>
+                        </div>
+                        <div class="report-details-grid">
+                            <p><span>اسم المبلغ:</span> {{ report.reporter_name }}</p>
+                            <p><span>رقم الهوية:</span> {{ report.reporter_id }}</p>
+                            <p><span>تاريخ البلاغ:</span> {{ report.report_date.strftime('%Y-%m-%d') if report.report_date else 'غير محدد' }}</p>
+                            <p><span>تاريخ التقديم:</span> {{ report.submission_time.strftime('%Y-%m-%d %H:%M') }}</p>
+                            <p><span>الموقع:</span> {{ report.location }}{% if report.location_other %} ({{ report.location_other }}){% endif %}</p>
+                            <p><span>نوع البلاغ:</span> {{ report.report_type }}</p>
+                            <p><span>الأهمية:</span> <span class="importance-label importance-{{ report.importance.name.lower() }}">
+                                {{ report.importance.value }}
+                                </span>
+                            </p>
+                            <p><span>معين إلى:</span> {{ report.assigned_to.username if report.assigned_to else 'غير معين' }}</p>
+                            <p><span>مصعد إلى:</span> {{ report.escalated_to.username if report.escalated_to else 'غير مصعد' }}</p>
+                            
+                            <p class="full-width-detail"><span>التفاصيل:</span> {{ report.details }}</p>
+                            <p class="full-width-detail"><span>الإجراء المتخذ:</span> {{ report.action_taken if report.action_taken else 'لم يتم بعد' }}</p>
+                        </div>
+
+                        {% if report.images %}
+                            <div class="report-images">
+                                <p><span>الصور المرفقة:</span></p>
+                                {% for image_filename in report.get_images() %}
+                                    <img src="{{ url_for('main.uploaded_file', filename=image_filename) }}" alt="صورة مرفقة رقم {{ loop.index }}" onclick="openModal(this)">
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        {# Action forms for managers/supervisors #}
+                        {% if current_user.role in [UserRole.SECURITY_MANAGER, UserRole.PROJECT_MANAGER, UserRole.SUPERVISOR] %}
+                        <div class="report-actions">
+                            <form method="POST" action="{{ url_for('report_actions.assign_report', report_id=report.id) }}" style="display: inline-flex; align-items: center; gap: 5px;">
+                                <label for="assign_user_{{ report.id }}">تعيين إلى:</label>
+                                <select name="user_id" id="assign_user_{{ report.id }}" required>
+                                    <option value="">-- اختر مستخدم --</option>
+                                    {% for user in users_for_assignment %}
+                                    <option value="{{ user.id }}" {% if report.assigned_to_id == user.id %}selected{% endif %}>{{ user.username }}</option>
+                                    {% endfor %}
+                                </select>
+                                <button type="submit">تعيين</button>
+                            </form>
+                            <form method="POST" action="{{ url_for('report_actions.update_status', report_id=report.id) }}" style="display: inline-flex; align-items: center; gap: 5px;">
+                                <label for="update_status_{{ report.id }}">تحديث الحالة:</label>
+                                <select name="status" id="update_status_{{ report.id }}" required>
+                                     {% for status_val in all_statuses %}
+                                     <option value="{{ status_val }}" {% if report.status.value == status_val %}selected{% endif %}>{{ status_val }}</option>
+                                     {% endfor %}
+                                </select>
+                                <button type="submit">تحديث</button>
+                            </form>
+                             <form method="POST" action="{{ url_for('report_actions.escalate_report', report_id=report.id) }}" style="display: inline-flex; align-items: center; gap: 5px;">
+                                <label for="escalate_user_{{ report.id }}">تصعيد إلى:</label>
+                                <select name="user_id" id="escalate_user_{{ report.id }}" required>
+                                    <option value="">-- اختر مدير --</option>
+                                    {# Populate with managers/specialists #}
+                                    {% for user in User.query.filter(User.role.in_([UserRole.SECURITY_MANAGER, UserRole.PROJECT_MANAGER, UserRole.REPORTS_SPECIALIST])).all() %}
+                                    <option value="{{ user.id }}" {% if report.escalated_to_id == user.id %}selected{% endif %}>{{ user.username }} ({{ user.role.value }})</option>
+                                    {% endfor %}
+                                </select>
+                                <button type="submit">تصعيد</button>
+                            </form>
+                        </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p class="no-reports">لا توجد بلاغات لعرضها حالياً.</p>
+            {% endif %}
+        </div>
+    </main>
+
+    <!-- Image Modal -->
+    <div id="imageModal" class="modal">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <img class="modal-content" id="modalImage">
+    </div>
+
+    <footer>
+        جميع الحقوق محفوظة &copy; شركة الدرعية {{ current_year if current_year else '' }}
+    </footer>
+
+    <script>
+        // Add active class to current nav link based on URL
+        document.addEventListener("DOMContentLoaded", function() {
+            const links = document.querySelectorAll('nav a');
+            const currentPath = window.location.pathname;
+            links.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === currentPath) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        // Modal functionality
+        var modal = document.getElementById("imageModal");
+        var modalImg = document.getElementById("modalImage");
+        function openModal(imgElement) {
+            modal.style.display = "block";
+            modalImg.src = imgElement.src;
+        }
+        function closeModal() {
+            modal.style.display = "none";
+        }
+        // Close modal if clicked outside the image
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>
+

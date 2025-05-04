@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تقديم بلاغ - نظام البلاغات</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #b17259;
+            --secondary-color: #bd9380;
+            --background-color: #f8f9fa;
+            --header-bg-color: #ffffff;
+            --text-color: #343a40;
+            --link-color: var(--primary-color);
+            --border-color: #e0e0e0;
+            --input-border-color: #ced4da;
+            --input-focus-border-color: var(--secondary-color);
+            --button-bg-color: var(--primary-color);
+            --button-hover-bg-color: #a57154;
+            --button-clear-bg-color: #6c757d; /* Grey for clear button */
+            --button-clear-hover-bg-color: #5a6268; /* Darker grey for hover */
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+            --card-bg-color: #ffffff;
+            --card-shadow: 0 2px 10px rgba(0,0,0,0.07);
+            --label-color: #495057;
+        }
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        header {
+            background-color: var(--header-bg-color);
+            padding: 15px 0;
+            text-align: center;
+            width: 100%;
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+            display: flex; /* Use flexbox for alignment */
+            justify-content: space-between; /* Space between logo and potential other items */
+            align-items: center;
+            padding-right: 5%; /* Add padding for logo alignment */
+            padding-left: 5%;
+        }
+        header img.logo {
+            max-height: 100px; /* Increased logo size */
+            order: 1; /* Move logo to the right */
+        }
+        header .header-title {
+             order: 0; /* Move title to the left */
+             font-size: 1.5em;
+             font-weight: 700;
+             color: var(--primary-color);
+        }
+        nav {
+            background-color: var(--primary-color);
+            width: 100%;
+            padding: 12px 0;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        nav a {
+            margin: 0 20px;
+            text-decoration: none;
+            color: white;
+            font-weight: 500;
+            font-size: 1.05em;
+            padding: 8px 15px;
+            border-radius: 5px;
+            transition: background-color 0.2s ease;
+        }
+        nav a:hover, nav a.active {
+            background-color: rgba(255, 255, 255, 0.15);
+            text-decoration: none;
+        }
+        main {
+            flex-grow: 1;
+            padding: 50px 20px;
+            width: 100%;
+            max-width: 900px;
+            box-sizing: border-box;
+        }
+        .form-container {
+            background-color: var(--card-bg-color);
+            padding: 35px 45px;
+            border-radius: 10px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--border-color);
+        }
+        .form-container h1 {
+            color: var(--primary-color);
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 35px;
+            font-size: 1.9em;
+            font-weight: 700;
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+        .form-group {
+            margin-bottom: 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 500;
+            color: var(--label-color);
+            font-size: 0.9em;
+        }
+        input[type="text"],
+        input[type="date"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--input-border-color);
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 1em;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            background-color: #fff;
+        }
+        input[type="text"]:focus,
+        input[type="date"]:focus,
+        select:focus,
+        textarea:focus {
+            border-color: var(--input-focus-border-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(189, 147, 128, 0.15);
+        }
+        textarea {
+            resize: vertical;
+            min-height: 130px;
+        }
+        input[type="file"] {
+            display: block;
+            width: 100%;
+            box-sizing: border-box;
+            margin-top: 8px;
+            padding: 12px 15px;
+            border: 1px dashed var(--input-border-color);
+            border-radius: 6px;
+            background-color: #fdfdfd;
+            cursor: pointer;
+            font-size: 0.95em;
+            color: #6c757d;
+            transition: border-color 0.2s ease, background-color 0.2s ease;
+        }
+        input[type="file"]:hover {
+            border-color: var(--secondary-color);
+            background-color: #fefefe;
+        }
+        .classification-display {
+            padding: 12px 15px;
+            border: 1px solid transparent;
+            border-radius: 6px;
+            background-color: #e9ecef;
+            font-weight: 700;
+            text-align: center;
+            min-height: 48.5px;
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.95em;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .classification-display.high { background-color: var(--danger-color); color: white; border-color: var(--danger-color);}
+        .classification-display.medium { background-color: var(--warning-color); color: #333; border-color: var(--warning-color);}
+        .classification-display.low { background-color: var(--info-color); color: white; border-color: var(--info-color);}
+
+        .button-group {
+            display: flex;
+            gap: 15px; /* Space between buttons */
+            margin-top: 30px;
+        }
+
+        button[type="submit"], button[type="button"] {
+            color: white;
+            padding: 14px 0; /* Use flex-grow instead of fixed width */
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 700;
+            font-family: 'Tajawal', sans-serif;
+            transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+            flex-grow: 1; /* Make buttons share space */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        button[type="submit"] {
+             background-color: var(--button-bg-color);
+        }
+        button#clear-form {
+             background-color: var(--button-clear-bg-color);
+        }
+        button[type="submit"]:hover {
+            background-color: var(--button-hover-bg-color);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+         button#clear-form:hover {
+            background-color: var(--button-clear-hover-bg-color);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        button[type="submit"]:active, button#clear-form:active {
+            transform: scale(0.99);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .form-group-full {
+             grid-column: 1 / -1;
+        }
+        #location_other_group {
+            display: none; /* Hide 'Other Location' field initially */
+        }
+        footer {
+            background-color: var(--header-bg-color);
+            padding: 20px 0;
+            text-align: center;
+            width: 100%;
+            border-top: 1px solid var(--border-color);
+            margin-top: auto;
+            font-size: 0.9em;
+            color: #6c757d;
+        }
+        /* Flash message styles */
+        .flashes {
+            margin-bottom: 20px;
+        }
+        .alert {
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid transparent;
+            border-radius: .25rem;
+        }
+        .alert-danger { color: #721c24; background-color: #f8d7da; border-color: #f5c6cb; }
+        .alert-warning { color: #856404; background-color: #fff3cd; border-color: #ffeeba; }
+        .alert-success { color: #155724; background-color: #d4edda; border-color: #c3e6cb; }
+        .alert-info { color: #0c5460; background-color: #d1ecf1; border-color: #bee5eb; }
+
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-title">نظام البلاغات بشركة الدرعية</div> <!-- Updated Title -->
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="شعار شركة الدرعية" class="logo"> <!-- Added class and moved -->
+    </header>
+    <nav>
+        <!-- Update links to use url_for -->
+        <a href="{{ url_for('main.index') }}" class="{% if request.endpoint == 'main.index' %}active{% endif %}">الرئيسية</a>
+        <a href="{{ url_for('main.report_page') }}" class="{% if request.endpoint == 'main.report_page' %}active{% endif %}">تقديم بلاغ</a>
+        <a href="{{ url_for('main.track_page') }}" class="{% if request.endpoint == 'main.track_page' %}active{% endif %}">متابعة البلاغات</a>
+        {% if current_user.is_authenticated %}
+            <a href="{{ url_for('main.inbox') }}" class="{% if request.endpoint == 'main.inbox' %}active{% endif %}">صندوق الوارد</a>
+            {% if current_user.role == UserRole.PROJECT_MANAGER %}
+                <a href="{{ url_for('main.manage_users_page') }}" class="{% if request.endpoint == 'main.manage_users_page' %}active{% endif %}">إدارة المستخدمين</a>
+            {% endif %}
+            <a href="{{ url_for('main.logout') }}">تسجيل الخروج</a>
+        {% else %}
+            <a href="{{ url_for('main.login') }}" class="{% if request.endpoint == 'main.login' %}active{% endif %}">تسجيل الدخول</a>
+        {% endif %}
+    </nav>
+    <main>
+        <div class="form-container">
+            <h1>نموذج تقديم بلاغ</h1>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                <div class="flashes">
+                {% for category, message in messages %}
+                  <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+                </div>
+              {% endif %}
+            {% endwith %}
+            <form id="report-form" action="{{ url_for('main.submit_report') }}" method="post" enctype="multipart/form-data">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="reporter_name">اسم المبلغ:</label>
+                        <input type="text" id="reporter_name" name="reporter_name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="reporter_id">رقم الهوية:</label>
+                        <input type="text" id="reporter_id" name="reporter_id" pattern="[0-9]+" title="الرجاء إدخال أرقام فقط" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="report_date">اليوم والتاريخ:</label>
+                        <input type="date" id="report_date" name="report_date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="location">الموقع:</label>
+                        <select id="location" name="location" required>
+                            <option value="" disabled selected>-- اختر الموقع --</option>
+                            {% for loc in locations %}
+                            <option value="{{ loc }}">{{ loc }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group" id="location_other_group">
+                        <label for="location_other">الموقع (أخرى):</label>
+                        <input type="text" id="location_other" name="location_other">
+                    </div>
+                    <div class="form-group">
+                        <label for="report_type">نوع البلاغ:</label>
+                        <select id="report_type" name="report_type" required>
+                            <option value="" disabled selected>-- اختر نوع البلاغ --</option>
+                            {% for cat in report_categories %}
+                            <option value="{{ cat }}">{{ cat }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="report_classification">تصنيف البلاغ:</label>
+                        <div id="report_classification" class="classification-display">-</div>
+                        <!-- Hidden input to potentially store the classification value if needed by backend -->
+                        <!-- <input type="hidden" id="classification_value" name="classification_value"> -->
+                    </div>
+                    <div class="form-group form-group-full">
+                        <label for="details">تفاصيل البلاغ:</label>
+                        <textarea id="details" name="details" required></textarea>
+                    </div>
+                    <div class="form-group form-group-full">
+                        <label for="action_taken">الاجراء المتخذ (اختياري):</label>
+                        <textarea id="action_taken" name="action_taken"></textarea>
+                    </div>
+                    <div class="form-group form-group-full">
+                        <label for="images">رفع صور (حتى {{ config.MAX_IMAGES }} صورة):</label>
+                        <input type="file" id="images" name="images" accept="image/png, image/jpeg, image/gif" multiple>
+                        <small style="display: block; margin-top: 8px; color: #6c757d; font-size: 0.85em;">الحد الأقصى {{ config.MAX_IMAGES }} صورة. الأنواع المسموح بها: JPG, PNG, GIF.</small>
+                    </div>
+                </div>
+                <div class="button-group">
+                    <button type="submit">إرسال البلاغ</button>
+                    <button type="button" id="clear-form">إفراغ النموذج</button>
+                </div>
+            </form>
+        </div>
+    </main>
+    <footer>
+        نظام البلاغات 2025 <!-- Updated Footer Text -->
+    </footer>
+
+    <script>
+        // Report categories mapping (passed from backend)
+        const reportCategoriesImportance = {{ report_categories_importance | tojson }};
+        const reportImportanceMap = {
+             // Map enum values to display text and class
+            "high": { text: "عالي الأهمية", class: "high" },
+            "medium": { text: "متوسط الأهمية", class: "medium" },
+            "low": { text: "منخفض الأهمية", class: "low" }
+        };
+
+        const reportTypeSelect = document.getElementById('report_type');
+        const classificationDisplay = document.getElementById('report_classification');
+        // const classificationValueInput = document.getElementById('classification_value'); // Uncomment if needed
+        const imageUpload = document.getElementById('images');
+        const locationSelect = document.getElementById('location');
+        const locationOtherGroup = document.getElementById('location_other_group');
+        const locationOtherInput = document.getElementById('location_other');
+        const reportForm = document.getElementById('report-form');
+        const clearFormButton = document.getElementById('clear-form');
+
+        // Update classification display when report type changes
+        reportTypeSelect.addEventListener('change', function() {
+            const selectedType = this.value;
+            // Fetch importance from the map passed by backend
+            const importanceValue = reportCategoriesImportance[selectedType] || 'low'; // Default to low if not found
+            const classification = reportImportanceMap[importanceValue];
+
+            if (classification) {
+                classificationDisplay.textContent = classification.text;
+                classificationDisplay.className = 'classification-display ' + classification.class;
+                // classificationValueInput.value = importanceValue; // Uncomment if needed
+            } else {
+                classificationDisplay.textContent = '-';
+                classificationDisplay.className = 'classification-display';
+                // classificationValueInput.value = ''; // Uncomment if needed
+            }
+        });
+
+        // Show/hide 'Other Location' field
+        locationSelect.addEventListener('change', function() {
+            if (this.value === 'اخرى') {
+                locationOtherGroup.style.display = 'block';
+                locationOtherInput.required = true; // Make it required when visible
+            } else {
+                locationOtherGroup.style.display = 'none';
+                locationOtherInput.required = false;
+                locationOtherInput.value = ''; // Clear the value when hidden
+            }
+        });
+
+        // Clear form button functionality
+        clearFormButton.addEventListener('click', function() {
+            reportForm.reset();
+            // Manually reset elements not cleared by form.reset()
+            classificationDisplay.textContent = '-';
+            classificationDisplay.className = 'classification-display';
+            locationOtherGroup.style.display = 'none';
+            locationOtherInput.required = false;
+            // Trigger change events to reset dependent elements if needed
+            reportTypeSelect.dispatchEvent(new Event('change'));
+            locationSelect.dispatchEvent(new Event('change'));
+        });
+
+        // Optional: Set default date to today
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date().toISOString().split('T')[0];
+            const dateInput = document.getElementById('report_date');
+            if (!dateInput.value) { // Only set if not already filled (e.g., by backend on error)
+                 dateInput.value = today;
+            }
+            // Initialize classification display based on initial value (if any)
+            reportTypeSelect.dispatchEvent(new Event('change'));
+            // Initialize 'Other Location' field visibility
+            locationSelect.dispatchEvent(new Event('change'));
+        });
+
+    </script>
+</body>
+</html>
+

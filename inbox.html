@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>صندوق الوارد - نظام بلاغات الدرعية</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Add custom styles if needed -->
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">نظام البلاغات</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="{{ url_for('main.inbox') }}">صندوق الوارد</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.report_page') }}">تقديم بلاغ</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.track_page') }}">متابعة البلاغات</a>
+                    </li>
+                    {% if current_user.role == UserRole.PROJECT_MANAGER %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.manage_users_page') }}">إدارة المستخدمين</a>
+                    </li>
+                    {% endif %}
+                </ul>
+                <ul class="navbar-nav">
+                     <li class="nav-item">
+                        <span class="navbar-text me-3">مرحباً, {{ current_user.username }} ({{ current_user.role.value }})</span>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-outline-secondary" href="{{ url_for('main.logout') }}">تسجيل الخروج</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1 class="mb-4">صندوق الوارد</h1>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <section>
+            <h2>البلاغات المعينة لك</h2>
+            {% if assigned_reports %}
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>رقم البلاغ</th>
+                            <th>النوع</th>
+                            <th>الموقع</th>
+                            <th>تاريخ التقديم</th>
+                            <th>الحالة</th>
+                            <th>الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for report in assigned_reports %}
+                            <tr>
+                                <td>{{ report.id[:8] }}...</td>
+                                <td>{{ report.report_type }}</td>
+                                <td>{{ report.location }}{% if report.location_other %} ({{ report.location_other }}){% endif %}</td>
+                                <td>{{ report.submission_time.strftime('%Y-%m-%d %H:%M') }}</td>
+                                <td><span class="badge bg-warning text-dark">{{ report.status.value }}</span></td>
+                                <td>
+                                    <a href="{{ url_for('main.track_page', report_id=report.id) }}" class="btn btn-sm btn-info">تفاصيل</a>
+                                    <!-- Add buttons for actions like 'Mark as In Progress', 'Resolve' etc. -->
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>لا توجد بلاغات معينة لك حالياً.</p>
+            {% endif %}
+        </section>
+
+        <hr class="my-4">
+
+        <section>
+            <h2>البلاغات المصعدة إليك</h2>
+            {% if escalated_reports %}
+                <table class="table table-striped table-hover">
+                     <thead>
+                        <tr>
+                            <th>رقم البلاغ</th>
+                            <th>النوع</th>
+                            <th>الموقع</th>
+                            <th>تاريخ التقديم</th>
+                            <th>الحالة</th>
+                            <th>الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for report in escalated_reports %}
+                            <tr>
+                                <td>{{ report.id[:8] }}...</td>
+                                <td>{{ report.report_type }}</td>
+                                <td>{{ report.location }}{% if report.location_other %} ({{ report.location_other }}){% endif %}</td>
+                                <td>{{ report.submission_time.strftime('%Y-%m-%d %H:%M') }}</td>
+                                <td><span class="badge bg-danger">{{ report.status.value }}</span></td>
+                                <td>
+                                    <a href="{{ url_for('main.track_page', report_id=report.id) }}" class="btn btn-sm btn-info">تفاصيل</a>
+                                     <!-- Add buttons for actions -->
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>لا توجد بلاغات مصعدة إليك حالياً.</p>
+            {% endif %}
+        </section>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+

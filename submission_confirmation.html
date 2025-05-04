@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تم استلام البلاغ - نظام بلاغات الدرعية</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #b17259;
+            --secondary-color: #bd9380;
+            --background-color: #ffffff;
+            --header-bg-color: #f8f9fa;
+            --text-color: #333333;
+            --link-color: var(--primary-color);
+            --border-color: #dee2e6;
+            --success-bg: #d4edda;
+            --success-text: #155724;
+            --success-border: #c3e6cb;
+        }
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        header {
+            background-color: var(--header-bg-color);
+            padding: 15px 0;
+            text-align: center;
+            width: 100%;
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        header img {
+            max-height: 80px;
+        }
+        nav {
+            background-color: var(--primary-color);
+            width: 100%;
+            padding: 10px 0;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        nav a {
+            margin: 0 20px;
+            text-decoration: none;
+            color: white;
+            font-weight: 700;
+            font-size: 1.1em;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+        nav a:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            text-decoration: none;
+        }
+        main {
+            flex-grow: 1;
+            padding: 40px 20px;
+            text-align: center;
+            width: 100%;
+            max-width: 700px;
+            box-sizing: border-box;
+        }
+        .confirmation-box {
+            background-color: var(--success-bg);
+            color: var(--success-text);
+            border: 1px solid var(--success-border);
+            padding: 30px;
+            border-radius: 8px;
+            margin-top: 30px;
+        }
+        .confirmation-box h1 {
+            color: var(--success-text);
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 1.8em;
+        }
+        .confirmation-box p {
+            font-size: 1.1em;
+            margin-bottom: 20px;
+        }
+        .confirmation-box strong {
+            font-weight: 700;
+        }
+        .home-link {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 25px;
+            background-color: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 700;
+            transition: background-color 0.3s ease;
+        }
+        .home-link:hover {
+            background-color: #a57154; /* Darker primary */
+        }
+        footer {
+            background-color: var(--header-bg-color);
+            padding: 15px 0;
+            text-align: center;
+            width: 100%;
+            border-top: 1px solid var(--border-color);
+            margin-top: auto;
+            font-size: 0.9em;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="شعار شركة الدرعية">
+    </header>
+    <nav>
+        <a href="{{ url_for('main.index') }}">الرئيسية</a>
+        <a href="{{ url_for('main.report_page') }}">تقديم بلاغ</a>
+        <!-- No track link for anonymous users -->
+    </nav>
+    <main>
+        <div class="confirmation-box">
+            <h1>تم استلام بلاغك بنجاح!</h1>
+            <p>شكراً لك على تقديم البلاغ. لقد تم تسجيله في النظام.</p>
+            <p>رقم مرجع البلاغ الخاص بك هو: <strong>{{ report_id }}</strong></p>
+            <p>يرجى الاحتفاظ بهذا الرقم للرجوع إليه عند الحاجة.</p>
+        </div>
+        <a href="{{ url_for('main.index') }}" class="home-link">العودة إلى الصفحة الرئيسية</a>
+    </main>
+    <footer>
+        جميع الحقوق محفوظة &copy; شركة الدرعية {{ current_year if current_year else '' }}
+    </footer>
+</body>
+</html>
+
